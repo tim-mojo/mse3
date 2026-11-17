@@ -138,3 +138,29 @@
   window.addEventListener('load', jump);
   window.addEventListener('hashchange', jump);
 })();
+
+// Events page: category filter chips (one set per layout).
+(function () {
+  Array.prototype.forEach.call(document.querySelectorAll('.ev-filters'), function (bar) {
+    var scope = bar.parentNode;
+    var rows = scope.querySelectorAll('[data-ev-list] .ev-row');
+    var empty = scope.querySelector('.ev-empty');
+    bar.addEventListener('click', function (e) {
+      var btn = e.target.closest('.ev-filter');
+      if (!btn) return;
+      var f = btn.getAttribute('data-filter');
+      Array.prototype.forEach.call(bar.querySelectorAll('.ev-filter'), function (b) {
+        var on = b === btn;
+        b.classList.toggle('is-active', on);
+        b.setAttribute('aria-pressed', String(on));
+      });
+      var shown = 0;
+      Array.prototype.forEach.call(rows, function (r) {
+        var match = f === 'all' || r.getAttribute('data-cat') === f;
+        r.hidden = !match;
+        if (match) { shown++; r.classList.add('is-visible'); }
+      });
+      if (empty) empty.hidden = shown > 0;
+    });
+  });
+})();
